@@ -1,7 +1,126 @@
 {% extends 'base.html' %}
-
-{% block title %}Pagina Inicial{% endblock %}
+{%load static%}
 
 {% block content %}
-	<h1>Pagina Inicial</h1> 
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-content">
+
+                <!-- ***** Banner Start ***** -->
+                <div class="main-banner">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            <div class="header-text">
+                                <h6>Bem vindo ao CineFlix</h6>
+                                <h4><em>Descubra</em> sua próxima grande aventura cinematográfica com facilidade!</h4>
+                                <div class="main-button">
+                                    <a href="{% url 'register' %}">Cadastre-se</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ***** Banner End ***** -->
+
+                <!-- ***** Most Popular Start ***** -->
+                <div class="most-popular">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="heading-section">
+                                <h4>Mais Populares</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-01.jpg' %}" alt="">
+                                        <h4>Fortnite<br><span>Sandbox</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-02.jpg' %}" alt="">
+                                        <h4>PubG<br><span>Battle S</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-03.jpg' %}" alt="">
+                                        <h4>Dota2<br><span>Steam-X</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-04.jpg' %}" alt="">
+                                        <h4>CS-GO<br><span>Legendary</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="item">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-6">
+                                                <div class="item inner-item">
+                                                    <img src="{% static 'images/popular-05.jpg' %}" alt="">
+                                                    <h4>Mini Craft<br><span>Legendary</span></h4>
+                                                    <ul>
+                                                        <li><i class="fa fa-star"></i> 4.8</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-6">
+                                                <div class="item">
+                                                    <img src="{% static 'images/popular-06.jpg' %}" alt="">
+                                                    <h4>Eagles Fly<br><span>Matrix Games</span></h4>
+                                                    <ul>
+                                                        <li><i class="fa fa-star"></i> 4.8</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-07.jpg' %}" alt="">
+                                        <h4>Warface<br><span>Max 3D</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-sm-6">
+                                    <div class="item">
+                                        <img src="{% static 'images/popular-08.jpg' %}" alt="">
+                                        <h4>Warcraft<br><span>Legend</span></h4>
+                                        <ul>
+                                            <li><i class="fa fa-star"></i> 4.8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="main-button">
+                                        <a href="browse.html">Discover Popular</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ***** Most Popular End ***** -->
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,56 @@
+
+
+.container-fluid{
+    margin-top: 100px;
+}
+
+.card-title {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.card {
+    margin-top: 50px;
+    border: none; 
+}
+
+.card-body {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-body label,
+.card-body input[type="text"],
+.card-body input[type="email"],
+.card-body input[type="password"],
+.card-body .btn {
+    color: #fff;
+}
+
+.card-body ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.card-body ul li {
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #333;
+    border-color: #ffc107;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-warning:hover {
+    background-color: #ffca28;
+    color: #333;
+    border-color: #ffca28;
+}

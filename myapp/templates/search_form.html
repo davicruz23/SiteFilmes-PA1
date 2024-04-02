@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2>Pesquisar Filmes</h2>
+    <form action="{% url 'search_movies' %}" method="GET">
+        <div class="form-group">
+            <label for="query">Digite o título do filme:</label>
+            <input type="text" class="form-control" id="query" name="query" placeholder="Digite o título do filme">
+        </div>
+        <button type="submit" class="btn btn-primary">Pesquisar</button>
+    </form>
+</div>
+{% endblock %}

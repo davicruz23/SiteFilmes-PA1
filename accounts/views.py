@@ -24,4 +24,4 @@ def register(request):
 
 def logout(request):
     auth_logout(request)
-    return redirect('mysite')  # Ou outra página que desejar redirecionar
+    return redirect('index')  # Ou outra página que desejar redirecionar

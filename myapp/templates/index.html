@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-{%load static%}
+{% load static %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
             <div class="page-content">
-
+                 
+                {% if not request.user.is_authenticated %}
                 <!-- ***** Banner Start ***** -->
                 <div class="main-banner">
                     <div class="row">
@@ -114,6 +115,7 @@
                     </div>
                 </div>
                 <!-- ***** Most Popular End ***** -->
+                {% endif %}
             </div>
         </div>
     </div>

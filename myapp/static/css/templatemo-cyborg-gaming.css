@@ -1747,3 +1747,10 @@ Pa1
   background-color: red;
   color: red;
 }
+
+.username {
+  font-weight: bold; /* Define a fonte em negrito */
+  color: #666666; /* Define a cor do texto */
+  font-size: 16px; /* Define o tamanho da fonte */
+  /* Adicione outros estilos conforme necessário */
+}

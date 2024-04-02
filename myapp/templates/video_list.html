@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<header class="header-area header-sticky">
+    <!-- Seu código do cabeçalho -->
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-content">
+                <h1>Lista de Vídeos</h1>
+
+                {% if page_obj %}
+                    <div class="row">
+                        {% for video in page_obj %}
+                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                <div class="card h-100 d-flex flex-column">
+                                    <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top" alt="{{ video.original_title }}">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">{{ video.original_title }}</h5>
+                                        <p class="card-text">{{ video.overview }}</p>
+                                        <div class="mt-auto"></div> <!-- Push content to the bottom -->
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Pagination -->
+                    <div class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <a class="btn btn-primary" href="?page=1">&laquo; Primeira</a>
+                            <a class="btn btn-primary" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                        {% endif %}
+                        <span class="current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                        {% if page_obj.has_next %}
+                            <a class="btn btn-primary" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                            <a class="btn btn-primary" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p>Não há vídeos para exibir.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,47 +38,53 @@
     <!-- ***** Preloader End ***** -->
 
     <!-- ***** Header Area Start ***** -->
-    <header class="header-area header-sticky">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <nav class="main-nav">
-                        <!-- ***** Logo Start ***** -->
-                        <a href="{% url 'index' %}" class="logo navbar-brand">
-                            <img src="{% static 'images/logo.png' %}" alt="CineFlix Logo" class="img-fluid" style="max-height: 50px; max-width: 100%;" href="index.html">
-                        </a>
-                        <!-- ***** Logo End ***** -->
-                        <!-- ***** Search End ***** -->
-                        <div class="search-input">
-                            <form id="search" action="#">
-                                <input type="text" placeholder="Type Something" id='searchText' name="searchKeyword"
-                                    onkeypress="handle" />
-                                <i class="fa fa-search"></i>
-                            </form>
-                        </div>
-                        <!-- ***** Search End ***** -->
-                        <!-- ***** Menu Start ***** -->
-                        <ul class="nav">
+<header class="header-area header-sticky">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <nav class="main-nav">
+                    <!-- ***** Logo Start ***** -->
+                    <a href="{% url 'index' %}" class="logo navbar-brand">
+                        <img src="{% static 'images/logo.png' %}" alt="CineFlix Logo" class="img-fluid" style="max-height: 50px; max-width: 100%;" href="index.html">
+                    </a>
+                    <!-- ***** Logo End ***** -->
+                    <!-- ***** Search End ***** -->
+                    <div class="search-input">
+                        <form id="search" action="{% url 'search_movies' %}" method="GET">
+                            <input type="text" placeholder="Type Something" id='searchText' name="query">
+                            <button type="submit" class="search-btn"><i class="fa fa-search search-icon"></i>Pesquisar</button>
+                        </form>
+                    </div>
+                    <!-- ***** Search End ***** -->
+                    <!-- ***** Menu Start ***** -->
+                    <ul class="nav">
+                        {% if request.user.is_authenticated %}
                             <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
                             <li><a href="{% url 'browse' %}" class="{% if 'browse' in request.path %}active{% endif %}">Browse</a></li>
                             <li><a href="{% url 'details' %}" class="{% if 'details' in request.path %}active{% endif %}">Details</a></li>
                             <li><a href="{% url 'streams' %}" class="{% if 'streams' in request.path %}active{% endif %}">Streams</a></li>
-                            {% if request.user.is_authenticated %}
-                                <li><a href="{% url 'profile' %}">Profile</a></li>
-                            {% else %}
-                                <li><a href="{% url 'login' %}">Login</a></li>
-                            {% endif %}
-                        </ul>
-                        <a class='menu-trigger'>
-                            <span>Menu</span>
-                        </a>
-                        <!-- ***** Menu End ***** -->
-                    </nav>
-                </div>
+                            <li>
+                                <span class="username">{{ request.user.username }}</span>
+                                <span class="logout-btn">
+                                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                                </span>
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                        {% endif %}
+                    </ul>
+                    <a class='menu-trigger'>
+                        <span>Menu</span>
+                    </a>
+                    <!-- ***** Menu End ***** -->
+                </nav>
             </div>
         </div>
-    </header>
-    <!-- ***** Header Area End ***** -->
+    </div>
+</header>
+<!-- ***** Header Area End ***** -->
+
 
     {% block content %}
     {% endblock %}
@@ -105,6 +110,24 @@
     <script src="{% static 'js/tabs.js' %}"></script>
     <script src="{% static 'js/popup.js' %}"></script>
     <script src="{% static 'js/custom.js' %}"></script>
+
+    <style>
+        /* Estilos para o botão */
+        .search-btn {
+            background-color: #007bff; /* Cor de fundo do botão */
+            color: #fff; /* Cor do texto do botão */
+            border: none; /* Remover borda */
+            padding: 10px 20px; /* Espaçamento interno do botão */
+            cursor: pointer; /* Cursor ao passar por cima do botão */
+            border-radius: 5px; /* Bordas arredondadas */
+        }
+    
+        /* Estilos para o ícone */
+        .search-icon {
+            color: #fff; /* Cor do ícone */
+            margin-right: 5px; /* Espaçamento à direita do ícone */
+        }
+    </style>
 
 </body>
 

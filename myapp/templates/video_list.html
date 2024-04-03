@@ -17,7 +17,9 @@
                         {% for video in page_obj %}
                             <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                                 <div class="card h-100 d-flex flex-column">
-                                    <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top" alt="{{ video.original_title }}">
+                                    <a href="{% url 'filme_details' video.id %}" class="{% if 'details' in request.path %}active{% endif %}">Details</a>
+                                        <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top" alt="{{ video.original_title }}">
+                                    </a>
                                     <div class="card-body d-flex flex-column">
                                         <h5 class="card-title">{{ video.original_title }}</h5>
                                         <p class="card-text">{{ video.overview }}</p>

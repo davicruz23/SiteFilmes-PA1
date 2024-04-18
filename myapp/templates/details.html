@@ -22,9 +22,14 @@
                         <p>Ano de Lançamento: {{ filme.release_date }}</p>
                         <!-- Adicione outras informações do filme aqui -->
                     </div>
+                    <form action="{% url 'add_to_favorites' filme_id=filme.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Adicionar aos Favoritos</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock %}

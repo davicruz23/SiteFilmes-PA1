@@ -10,4 +10,6 @@ urlpatterns = [
     path('video-list/', views.video_list, name='video_list'),
     path('search/', views.search_movies, name='search_movies'),
     path('profile-edit/', views.update_profile, name='atualizar_perfil'),
+    path('filme/<int:filme_id>/add_to_favorites/', views.add_to_favorites, name='add_to_favorites'),
+
 ]

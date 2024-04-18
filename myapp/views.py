@@ -69,7 +69,7 @@ def update_profile(request):
 
 def video_list(request):
     # URL da API do TMDb para descobrir vídeos
-    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
+    url = "https://api.themoviedb.org/3/movie/popular?language=en-US"
     # Chave de API do TMDb
     api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
     # Cabeçalhos da requisição
@@ -109,7 +109,7 @@ def search_movies(request):
     if 'query' in request.GET:
         query = request.GET.get('query')
         # URL da API do TMDb para pesquisar filmes
-        url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false&language=pt-BR&page=1"
+        url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false&language=en-US&page=1"
         # Chave de API do TMDb
         api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
         # Cabeçalhos da requisição
@@ -139,3 +139,24 @@ def search_movies(request):
     
     # Se a solicitação não contiver uma consulta, retorne uma página de pesquisa vazia
     return render(request, 'search_form.html')
+
+@login_required
+def add_to_favorites(request, filme_id):
+    if request.method == 'POST':
+        # Verificar se o ID do filme é um número inteiro válido
+        try:
+            filme_id = int(filme_id)
+        except ValueError:
+            # Se o ID do filme não for um número inteiro válido, redirecione para a página inicial
+            return redirect('index')
+
+        # Aqui você pode adicionar o filme aos favoritos do usuário
+        # Verifique se o filme com o ID fornecido existe na API ou em algum cache local
+
+        # Se o filme for encontrado na API ou no cache local, adicione-o aos favoritos do usuário
+
+        # Redirecionar de volta para a página de detalhes do filme
+        return redirect('filme_details', filme_id=filme_id)
+    else:
+        # Se o método da solicitação não for POST, redirecione para a página inicial
+        return redirect('index')

@@ -17,6 +17,16 @@
                 <h1 class="card-title">Perfil de {{ user.username }}</h1>
                 <p class="card-text">Descrição: {{ profile.description }}</p>
                 <p class="card-text">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
+                <h2>Filmes Favoritos:</h2>
+                {% if profile.filmes.all %}
+                    <ul>
+                        {% for filme in profile.filmes.all %}
+                            <li>{{ filme.original_title }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Nenhum filme favorito adicionado ainda.</p>
+                {% endif %}
             </div>
             <a href="{% url 'atualizar_perfil' %}" class="btn btn-primary">Atualizar Perfil</a>
         </div>

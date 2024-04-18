@@ -41,3 +41,24 @@
 .text-white {
     color: #fff; /* Cor do texto branco */
 }
+.profile-btn, .logout-btn {
+    display: inline-block;
+    margin-left: 15px; /* Espaçamento entre os botões */
+}
+
+/* Estilos para alinhar verticalmente o nome de usuário com os botões */
+.nav li {
+    display: flex;
+    align-items: center;
+}
+.user-info {
+    border: 1px solid #d6cfcf; /* Adicionando uma borda */
+    padding: 5px 10px; /* Adicionando espaçamento interno */
+    border-radius: 5px; /* Adicionando bordas arredondadas */
+    display: inline-block; /* Permitindo que a borda se ajuste ao conteúdo */
+}
+.header-area {
+    position: relative; /* Garanta que a posição seja relativa */
+    z-index: 1000; /* Defina um valor alto para o z-index */
+}
+

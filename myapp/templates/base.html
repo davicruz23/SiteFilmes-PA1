@@ -59,26 +59,22 @@
                         <!-- ***** Menu Start ***** -->
                         <ul class="nav">
                             {% if request.user.is_authenticated %}
-                            <li><a href="{% url 'index' %}"
-                                    class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-                            <li><a href="{% url 'video_list' %}"
-                                    class="{% if 'lista' in request.path %}active{% endif %}">Lista</a></li>
-                            <li><a href="" class="">Details</a></li>
-                            <li><a href="{% url 'streams' %}"
-                                    class="{% if 'streams' in request.path %}active{% endif %}">Streams</a></li>
-                            <li>
-                                <span class="username">{{ request.user.username }}</span>
-                                <span class="profile-btn">
-                                    <a href="{% url 'profile' %}" class="btn btn-danger">Profile</a>
-                                </span>
-                                <span class="logout-btn">
-                                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-                                </span>
-                            </li>
+                                <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                                <li><a href="{% url 'video_list' %}" class="{% if 'lista' in request.path %}active{% endif %}">Lista</a></li>
+                                <li><a href="" class="">Details</a></li>
+                                <li><a href="{% url 'streams' %}" class="{% if 'streams' in request.path %}active{% endif %}">Streams</a></li>
+                                <li class="user-info">
+                                    <span class="username">{{ request.user.username }}</span>
+                                    <span class="profile-btn">
+                                        <a href="{% url 'profile' %}" class="btn btn-danger">Profile</a>
+                                    </span>
+                                    <span class="logout-btn">
+                                        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                                    </span>
+                                </li>
                             {% else %}
-                            <li><a href="{% url 'index' %}"
-                                    class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-                            <li><a href="{% url 'login' %}">Login</a></li>
+                                <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                                <li><a href="{% url 'login' %}">Login</a></li>
                             {% endif %}
                         </ul>
                         <a class='menu-trigger'>

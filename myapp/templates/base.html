@@ -38,55 +38,55 @@
     <!-- ***** Preloader End ***** -->
 
     <!-- ***** Header Area Start ***** -->
-<header class="header-area header-sticky">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <nav class="main-nav">
-                    <!-- ***** Logo Start ***** -->
-                    <a href="{% url 'index' %}" class="logo navbar-brand">
-                        <img src="{% static 'images/logo.png' %}" alt="CineFlix Logo" class="img-fluid" style="max-height: 50px; max-width: 100%;" href="index.html">
-                    </a>
-                    <!-- ***** Logo End ***** -->
-                    <!-- ***** Search End ***** -->
-                    <div class="search-input">
-                        <form id="search" action="{% url 'search_movies' %}" method="GET">
-                            <input type="text" placeholder="Type Something" id='searchText' name="query">
-                            <button type="submit" class="search-btn"><i class="fa fa-search search-icon"></i>Pesquisar</button>
-                        </form>
-                    </div>
-                    <!-- ***** Search End ***** -->
-                    <!-- ***** Menu Start ***** -->
-                    <ul class="nav">
-                        {% if request.user.is_authenticated %}
-                            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-                            <li><a href="{% url 'video_list' %}" class="{% if 'lista' in request.path %}active{% endif %}">Lista</a></li>
-                            <li><a href="" class="">Details</a></li>
-                            <li><a href="{% url 'streams' %}" class="{% if 'streams' in request.path %}active{% endif %}">Streams</a></li>
-                            <li>
-                                <span class="username">{{ request.user.username }}</span>
-                                <span class="profile-btn">
-                                    <a href="{% url 'profile' %}" class="btn btn-danger">Profile</a>
-                                </span>
-                                <span class="logout-btn">
-                                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-                                </span>
-                            </li>
-                        {% else %}
-                            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-                            <li><a href="{% url 'login' %}">Login</a></li>
-                        {% endif %}
-                    </ul>
-                    <a class='menu-trigger'>
-                        <span>Menu</span>
-                    </a>
-                    <!-- ***** Menu End ***** -->
-                </nav>
+    <header class="header-area header-sticky">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav class="main-nav">
+                        <!-- ***** Logo Start ***** -->
+                        <a href="{% url 'index' %}" class="logo navbar-brand">
+                            <img src="{% static 'images/logo.png' %}" alt="CineFlix Logo" class="img-fluid"
+                                style="max-height: 50px; max-width: 100%;" href="index.html">
+                        </a>
+                        <!-- ***** Logo End ***** -->
+                        <!-- ***** Search End ***** -->
+                        <div class="search-input">
+                            <form id="search" action="{% url 'search_movies' %}" method="GET">
+                                <input type="text" placeholder="Pesquisar" id='searchText' name="query">
+                            </form>
+                        </div>
+                        <!-- ***** Search End ***** -->
+                        <!-- ***** Menu Start ***** -->
+                        <ul class="nav">
+                            {% if request.user.is_authenticated %}
+                                <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                                <li><a href="{% url 'video_list' %}" class="{% if 'lista' in request.path %}active{% endif %}">Lista</a></li>
+                                <li><a href="" class="">Details</a></li>
+                                <li><a href="{% url 'streams' %}" class="{% if 'streams' in request.path %}active{% endif %}">Streams</a></li>
+                                <li class="user-info">
+                                    <span class="username">{{ request.user.username }}</span>
+                                    <span class="profile-btn">
+                                        <a href="{% url 'profile' %}" class="btn btn-danger">Profile</a>
+                                    </span>
+                                    <span class="logout-btn">
+                                        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                                    </span>
+                                </li>
+                            {% else %}
+                                <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                                <li><a href="{% url 'login' %}">Login</a></li>
+                            {% endif %}
+                        </ul>
+                        <a class='menu-trigger'>
+                            <span>Menu</span>
+                        </a>
+                        <!-- ***** Menu End ***** -->
+                    </nav>
+                </div>
             </div>
         </div>
-    </div>
-</header>
-<!-- ***** Header Area End ***** -->
+    </header>
+    <!-- ***** Header Area End ***** -->
 
 
     {% block content %}
@@ -114,22 +114,55 @@
     <script src="{% static 'js/popup.js' %}"></script>
     <script src="{% static 'js/custom.js' %}"></script>
 
+    <!-- JavaScript para enviar o formulário quando pressionar Enter -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('search').addEventListener('submit', function (event) {
+                event.preventDefault(); // Impede o envio do formulário padrão
+
+                // Insira aqui o código para processar a pesquisa
+                var query = document.getElementById('searchText').value;
+                // Faça algo com a consulta (por exemplo, redirecione para a página de resultados)
+                window.location.href = "{% url 'search_movies' %}?query=" + query;
+            });
+
+            // Adiciona um ouvinte de evento ao campo de texto de pesquisa para ativar a pesquisa quando a tecla Enter for pressionada
+            document.getElementById('searchText').addEventListener('keypress', function (event) {
+                if (event.keyCode === 13) { // Verifica se a tecla pressionada é a tecla Enter (código 13)
+                    event.preventDefault(); // Impede o comportamento padrão da tecla Enter (como inserir uma nova linha)
+                    document.getElementById('search').submit(); // Envie o formulário
+                }
+            });
+        });
+    </script>
+
     <style>
         /* Estilos para o botão */
+        
         .search-btn {
-            background-color: #007bff; /* Cor de fundo do botão */
-            color: #fff; /* Cor do texto do botão */
-            border: none; /* Remover borda */
-            padding: 10px 20px; /* Espaçamento interno do botão */
-            cursor: pointer; /* Cursor ao passar por cima do botão */
-            border-radius: 5px; /* Bordas arredondadas */
+            background-color: #007bff;
+            /* Cor de fundo do botão */
+            color: #fff;
+            /* Cor do texto do botão */
+            border: none;
+            /* Remover borda */
+            padding: 10px 20px;
+            /* Espaçamento interno do botão */
+            cursor: pointer;
+            /* Cursor ao passar por cima do botão */
+            border-radius: 5px;
+            /* Bordas arredondadas */
         }
-    
+
         /* Estilos para o ícone */
+        
         .search-icon {
-            color: #fff; /* Cor do ícone */
-            margin-right: 5px; /* Espaçamento à direita do ícone */
+            color: #fff;
+            /* Cor do ícone */
+            margin-right: 5px;
+            /* Espaçamento à direita do ícone */
         }
+
     </style>
 
 </body>

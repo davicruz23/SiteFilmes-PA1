@@ -23,30 +23,7 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-body">
-                {% if profile.fotoPerfil %}
-                    <img src="{{ profile.fotoPerfil.url }}" alt="Imagem de Perfil">
-                {% else %}
-                    <p>Imagem de perfil não encontrada</p>
-                {% endif %}
-                <h1 class="card-title">Perfil de {{ user.username }}</h1>
-                <p class="card-text">Descrição: {{ profile.description }}</p>
-                <p class="card-text">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
-                <h2>Filmes Favoritos:</h2>
-                {% if profile.filmes.all %}
-                    <ul>
-                        {% for filme in profile.filmes.all %}
-                            <li>{{ filme.original_title }}</li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Nenhum filme favorito adicionado ainda.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+   
     <!-- ***** Preloader End ***** -->
 
     <!-- ***** Header Area Start ***** -->
@@ -125,6 +102,16 @@
                         <p class="card-text">Descrição: {{ profile.description }}</p>
                         <p class="card-text">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
                         <a href="{% url 'atualizar_perfil' %}" class="btn btn-primary mt-3">Atualizar Perfil</a>
+                        <h2>Filmes Favoritos:</h2>
+                        {% if profile.filmes.all %}
+                            <ul>
+                                {% for filme in profile.filmes.all %}
+                                    <li>{{ filme.original_title }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Nenhum filme favorito adicionado ainda.</p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

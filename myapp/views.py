@@ -18,7 +18,7 @@ def browse(request):
 
 def filme_details(request, filme_id):
     # URL da API do TMDb para obter detalhes do filme
-    url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=en-US"
+    url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
     # Chave de API do TMDb
     api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
     # Cabeçalhos da requisição
@@ -97,7 +97,7 @@ def video_list(request):
         page_obj = paginator.get_page(page_number)
         
         # Renderize o template 'video_list.html' passando os vídeos como contexto
-        return render(request, 'video_list.html', {'page_obj': page_obj})
+        return render(request, 'index.html', {'page_obj': page_obj})
     else:
         # Se não, exiba uma mensagem de erro
         error_message = f"Erro ao listar vídeos: {response.status_code}"

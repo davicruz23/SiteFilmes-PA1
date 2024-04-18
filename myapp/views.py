@@ -69,7 +69,7 @@ def update_profile(request):
 
 def video_list(request):
     # URL da API do TMDb para descobrir vídeos
-    url = "https://api.themoviedb.org/3/movie/popular?language=en-US"
+    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
     # Chave de API do TMDb
     api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
     # Cabeçalhos da requisição
@@ -109,7 +109,7 @@ def search_movies(request):
     if 'query' in request.GET:
         query = request.GET.get('query')
         # URL da API do TMDb para pesquisar filmes
-        url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false&language=en-US&page=1"
+        url = f"https://api.themoviedb.org/3/search/movie?query={query}&include_adult=false&language=pt-BR&page=1"
         # Chave de API do TMDb
         api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
         # Cabeçalhos da requisição

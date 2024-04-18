@@ -143,20 +143,55 @@ def search_movies(request):
 @login_required
 def add_to_favorites(request, filme_id):
     if request.method == 'POST':
-        # Verificar se o ID do filme é um número inteiro válido
-        try:
-            filme_id = int(filme_id)
-        except ValueError:
-            # Se o ID do filme não for um número inteiro válido, redirecione para a página inicial
-            return redirect('index')
+        url = "https://api.themoviedb.org/3/movie/popular?language=en-US"
+        # Chave de API do TMDb
+        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
+        # Cabeçalhos da requisição
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+        }
+        # Parâmetros da requisição
+        params = {
+            "api_key": api_key,
+            "sort_by": "popularity.desc"  # Você pode ajustar os parâmetros de acordo com sua necessidade
+        }
+        # Parâmetros da requisição
+        params = {
+            "api_key": api_key
+        }
 
-        # Aqui você pode adicionar o filme aos favoritos do usuário
-        # Verifique se o filme com o ID fornecido existe na API ou em algum cache local
+        # Faça a requisição à API do TMDb para obter os detalhes do filme
+        response = requests.get(url, headers=headers, params=params)
 
-        # Se o filme for encontrado na API ou no cache local, adicione-o aos favoritos do usuário
+        # Verifique se a resposta foi bem-sucedida (código 200)
+        if response.status_code == 200:
+            # Obtenha os detalhes do filme da resposta da API
+            filme_data = response.json()
+            # Verifique se o filme já existe em nossa base de dados pelo seu ID
+            filme, created = Filme.objects.get_or_create(
+                id=filme_data['id'],
+                defaults={
+                    'titulo': filme_data['title'],
+                    'ano': filme_data['release_date'],
+                    'descricao': filme_data['overview'],
+                    'genero': '',  # Você pode adicionar a lógica para obter o gênero aqui
+                    # 'fotoFilme': '',  # Você pode adicionar a lógica para obter a foto do filme aqui
+                }
+            )
 
-        # Redirecionar de volta para a página de detalhes do filme
-        return redirect('filme_details', filme_id=filme_id)
+            # Se o filme já existir ou for criado com sucesso, adicioná-lo à lista de filmes favoritos do usuário
+            if filme:
+                profile = request.user.profile
+                profile.filmes.add(filme)
+                return redirect('filme_details', filme_id=filme_id)
+            else:
+                # Se não foi possível criar o filme ou obtê-lo da API, redirecione para a página de erro
+                return render(request, 'error.html', {'error_message': 'Erro ao adicionar filme aos favoritos'})
+        else:
+            # Se a requisição à API do TMDb falhou, redirecione para a página de erro
+            error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
+            return render(request, 'error.html', {'error_message': error_message})
     else:
         # Se o método da solicitação não for POST, redirecione para a página inicial
         return redirect('index')

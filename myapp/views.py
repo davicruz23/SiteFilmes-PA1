@@ -56,7 +56,26 @@ def streams(request):
 @login_required
 def profile(request):
     profile = get_object_or_404(MyProfile, user=request.user)
-    return render(request, 'profile.html', {'profile': profile})
+    filmes_vistos = []
+
+    for filme_id in profile.filmes.values_list('api_id', flat=True):  # Obter apenas os IDs dos filmes vistos pelo usuário
+        # Fazer uma solicitação para obter os detalhes do filme
+        url = f"https://api.themoviedb.org/3/movie/{filme_id}"
+        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
+        params = {
+            "api_key": api_key,
+            "language": "pt-BR"
+        }
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            filme_detalhes = response.json()
+            titulo_filme = filme_detalhes.get('original_title')
+            poster_path = filme_detalhes.get('poster_path')
+            if titulo_filme and poster_path:
+                filmes_vistos.append({'titulo': titulo_filme, 'poster_url': f"https://image.tmdb.org/t/p/w500/{poster_path}"})
+
+    return render(request, 'profile.html', {'profile': profile, 'filmes_vistos': filmes_vistos})
 
 def update_profile(request):
     profile = request.user.profile  # Obtém o profile do usuário atual

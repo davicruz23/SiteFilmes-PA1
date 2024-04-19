@@ -102,16 +102,22 @@
                         <p class="card-text">Descrição: {{ profile.description }}</p>
                         <p class="card-text">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
                         <a href="{% url 'atualizar_perfil' %}" class="btn btn-primary mt-3">Atualizar Perfil</a>
-                        <h2>Filmes Favoritos:</h2>
-                        {% if profile.filmes.all %}
-                            <ul>
-                                {% for filme in profile.filmes.all %}
-                                    <li>{{ filme.original_title }}</li>
+                        <h2 class="mt-4">Filmes Vistos:</h2>
+                        <div class="container-fluid">
+                            <div class="row justify-content-center">
+                                {% for filme in filmes_vistos %}
+                                    <div class="col-md-3 mb-4">
+                                        <div class="card">
+                                            <img src="{{ filme.poster_url }}" class="card-img-top" alt="{{ filme.titulo }}">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ filme.titulo }}</h5>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p>Nenhum filme favorito adicionado ainda.</p>
-                        {% endif %}
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

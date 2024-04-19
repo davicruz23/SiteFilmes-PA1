@@ -21,16 +21,17 @@
                     </div>
                 </div>
                 <!-- ***** Banner End ***** -->
-                <!-- ***** Most Popular Start ***** -->
-                <div class="most-popular ">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="heading-section">
-                                <h4>Mais Populares</h4>
-                            </div>
+                    <!-- ***** Most Popular Start ***** -->
+                    <div class="most-popular ">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="heading-section">
+                                    <h4>Mais Populares</h4>
+                                </div>
                                 {% if page_obj %}
                                     <div class="row">
-                                        {% for video in page_obj %}
+                                        {% for video in page_obj.object_list|slice:":8" %}
+                                        <!-- Limitando para mostrar apenas 8 filmes -->
                                         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                                             <div class="card h-75 d-flex flex-column">
                                                 <a href="{% url 'filme_details' video.id %}" class="{% if 'details' in request.path %}active{% endif %}">
@@ -44,31 +45,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
                                         {% endfor %}
                                     </div>
-                                    <!-- Pagination -->
-                                    <div class="pagination justify-content-center">
-                                        {% if page_obj.has_previous %}
-                                            <a href="?page=1">&laquo; Primeira</a>
-                                            <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-                                        {% endif %}
-                                        <span class="current">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-                                        {% if page_obj.has_next %}
-                                            <a href="?page={{ page_obj.next_page_number }}">Próxima</a>
-                                            <span style="margin-right: 10px;"></span> <!-- Espaço -->
-                                            <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
-                                        {% endif %}
-                                    </div>
-                                    
                                 {% else %}
                                     <p>Não há vídeos para exibir.</p>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- ***** Most Popular End ***** -->
+                    <!-- ***** Most Popular End ***** -->
                 {% endif %}
             </div>
         </div>

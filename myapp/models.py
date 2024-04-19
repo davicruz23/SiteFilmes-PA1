@@ -4,18 +4,16 @@ from django.dispatch import receiver
 from django.db import models
 
 class Filme(models.Model):
-    titulo = models.CharField(max_length=100)
-    ano = models.IntegerField()
-    descricao = models.TextField()
-    genero = models.CharField(max_length=50)
-    fotoFilme = models.ImageField(upload_to='filme_fotos/')
+    api_id = models.IntegerField(unique=False, default=0)
+
+
 
 class MyProfile(models.Model):
     user = models.OneToOneField(User, 
                         on_delete=models.CASCADE, related_name='profile')
     description = models.CharField(max_length=100)
-    dataDeNascimento = models.DateField(default='1900-01-01')  # Valor padrão para dataDeNascimento
-    fotoPerfil = models.ImageField(upload_to='perfil_fotos/', default='default_profile_pic.jpg')  # Valor padrão para fotoPerfil
+    dataDeNascimento = models.DateField(default='1900-01-01') 
+    fotoPerfil = models.ImageField(upload_to='perfil_fotos/', default='default_profile_pic.jpg')
     filmes = models.ManyToManyField(Filme)
     amigos = models.ManyToManyField('self')
     

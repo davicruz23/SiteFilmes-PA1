@@ -4,6 +4,8 @@ from .models import Filme, MyProfile
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .forms import MyProfileForm
+from django.contrib import messages
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -176,58 +178,41 @@ def search_movies(request):
     # Se a solicitação não contiver uma consulta, retorne uma página de pesquisa vazia
     return render(request, 'search_form.html')
 
+
 @login_required
-def add_to_favorites(request, filme_id):
-    if request.method == 'POST':
-        url = "https://api.themoviedb.org/3/movie/popular?language=en-US"
-        # Chave de API do TMDb
-        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
-        # Cabeçalhos da requisição
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-        }
-        # Parâmetros da requisição
-        params = {
-            "api_key": api_key,
-            "sort_by": "popularity.desc"  # Você pode ajustar os parâmetros de acordo com sua necessidade
-        }
-        # Parâmetros da requisição
-        params = {
-            "api_key": api_key
-        }
+def marcar_visto(request, filme_id):
+    # URL da API do TMDb para obter detalhes do filme
+    url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
+    # Chave de API do TMDb
+    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
+    # Cabeçalhos da requisição
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+    }
 
-        # Faça a requisição à API do TMDb para obter os detalhes do filme
-        response = requests.get(url, headers=headers, params=params)
+    # Parâmetros da requisição
+    params = {
+        "api_key": api_key
+    }
 
-        # Verifique se a resposta foi bem-sucedida (código 200)
-        if response.status_code == 200:
-            # Obtenha os detalhes do filme da resposta da API
-            filme_data = response.json()
-            # Verifique se o filme já existe em nossa base de dados pelo seu ID
-            filme, created = Filme.objects.get_or_create(
-                id=filme_data['id'],
-                defaults={
-                    'titulo': filme_data['title'],
-                    'ano': filme_data['release_date'],
-                    'descricao': filme_data['overview'],
-                    'genero': '',  # Você pode adicionar a lógica para obter o gênero aqui
-                    # 'fotoFilme': '',  # Você pode adicionar a lógica para obter a foto do filme aqui
-                }
-            )
+    # Faça a requisição à API do TMDb para obter os detalhes do filme
+    response = requests.get(url, headers=headers, params=params)
 
-            # Se o filme já existir ou for criado com sucesso, adicioná-lo à lista de filmes favoritos do usuário
-            if filme:
-                profile = request.user.profile
-                profile.filmes.add(filme)
-                return redirect('filme_details', filme_id=filme_id)
-            else:
-                # Se não foi possível criar o filme ou obtê-lo da API, redirecione para a página de erro
-                return render(request, 'error.html', {'error_message': 'Erro ao adicionar filme aos favoritos'})
-        else:
-            # Se a requisição à API do TMDb falhou, redirecione para a página de erro
-            error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
-            return render(request, 'error.html', {'error_message': error_message})
+    # Verifique se a resposta foi bem-sucedida (código 200)
+    if response.status_code == 200:
+        # Se sim, obtenha os detalhes do filme
+        filme = response.json()
+        # Salve o ID do filme no modelo Filme
+        novo_filme = Filme(api_id=filme_id)
+        novo_filme.save()
+        
+        # Agora, vincule este filme ao usuário atual
+        request.user.profile.filmes.add(novo_filme)
+        
+        # Renderize o template 'video_details.html' passando os detalhes do filme como contexto
+        return render(request, 'details.html', {'filme': filme})
     else:
-        # Se o método da solicitação não for POST, redirecione para a página inicial
-        return redirect('index')
+        # Se não, exiba uma mensagem de erro
+        error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
+        return render(request, 'error.html', {'error_message': error_message})

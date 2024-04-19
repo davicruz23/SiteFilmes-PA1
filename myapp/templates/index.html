@@ -36,10 +36,10 @@
                                             <div class="card h-75 d-flex flex-column">
                                                 <a href="{% url 'filme_details' video.id %}" class="{% if 'details' in request.path %}active{% endif %}">
                                                     <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top"
-                                                        alt="{{ video.original_title }}">
+                                                        alt="{{ video.title }}">
                                                 </a>
                                                 <div class="card-body d-flex flex-column">
-                                                    <h5 class="card-title">{{ video.original_title }}</h5>
+                                                    <h5 class="card-title">{{ video.title }}</h5>
                                                     <!-- <p class="card-text">{{ video.overview }}</p> -->
                                                     <div class="mt-auto"></div> <!-- Push content to the bottom -->
                                                 </div>

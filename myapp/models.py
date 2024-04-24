@@ -6,6 +6,10 @@ from django.db import models
 class Filme(models.Model):
     api_id = models.IntegerField(unique=False, default=0)
 
+def get_poster_url(self):
+        base_url = "https://image.tmdb.org/t/p/w500/"
+        return f"{base_url}{self.api_id}"  # Supondo que o ID retornado pela API do TMDB seja o mesmo usado para recuperar o poster
+
 
 
 class MyProfile(models.Model):

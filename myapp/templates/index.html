@@ -43,30 +43,32 @@
                 <!-- Seção para exibir a lista de usuários e seus últimos filmes vistos -->
                 {% if request.user.is_authenticated %}
                 {% if lista_usuarios %}
-                <!-- ***** Lista de Usuários ***** -->
-                <div class="usuarios-lista">
-                    <h2>Últimas Atualizações</h2>
-                    {% for usuario_info in lista_usuarios %}
-                    <div class="card mb-3">
-                        <div class="card-header d-flex align-items-center">
-                            <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
-                            <h5 class="mb-0" style="color: rgb(0, 0, 0);">  {{ usuario_info.usuario.username }}</h5>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="card-title">Último Filme Visto:</h6>
-                            {% if usuario_info.imagem_ultimo_filme %}
-                            <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
-                            {% else %}
-                            <p class="card-text">Nenhum filme visto encontrado.</p>
-                            {% endif %}
-                        </div>
+                    <!-- ***** Lista de Usuários ***** -->
+                    <div class="usuarios-lista">
+                        <h2>Últimas Atualizações</h2>
+                        {% for usuario_info in lista_usuarios %}
+                            <div class="card mb-3">
+                                <div class="card-header d-flex align-items-center">
+                                    <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <!-- Nome de usuário agora é um link para o perfil do usuário -->
+                                    <a href="{% url 'perfil_usuario' username=usuario_info.usuario.username %}" style="color: black;"><h5 style="color: black;" class="mb-0">{{ usuario_info.usuario.username }}</h5></a>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">Último Filme Visto:</h6>
+                                    {% if usuario_info.imagem_ultimo_filme %}
+                                        <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                    {% else %}
+                                        <p class="card-text">Nenhum filme visto encontrado.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
                 {% else %}
-                <p>Nenhum usuário encontrado.</p>
+                    <p>Nenhum usuário encontrado.</p>
                 {% endif %}
                 {% endif %}
+
             </div>
         </div>
     </div>

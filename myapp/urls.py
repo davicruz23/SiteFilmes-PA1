@@ -3,6 +3,7 @@ from myapp import views
 
 urlpatterns = [
     path('', views.home, name='index'),
+    path('perfil/<str:username>/', views.exibir_perfil_usuario, name='perfil_usuario'),
     path('browse/', views.browse, name='browse'),
     path('details/<int:filme_id>/', views.filme_details, name='filme_details'),
     path('streams/', views.streams, name='streams'),

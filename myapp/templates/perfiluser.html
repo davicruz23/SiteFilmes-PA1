@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="page-content"> 
+                <!-- Exibir informações do perfil do usuário -->
+                <div class="perfil-usuario">
+                    <div class="card mb-3">
+                        <div class="card-header text-center"> <!-- Centralizando a imagem horizontalmente -->
+                            <img src="{{ usuario.profile.fotoPerfil.url }}" class="rounded-circle img-fluid" alt="Foto de perfil de {{ usuario.username }}" style="width: 100px; height: 100px; object-fit: cover; margin: 0; padding: 0;">
+                        </div>
+                        <div class="card-body">
+                            <h4 style="color: rgb(252, 185, 0);" class="card-title">Usuário: {{ usuario.username }}</h4>
+                            <h5 style="color: rgb(252, 185, 0);" class="card-text">Descrição: {{ usuario.profile.description }}</h5>
+                            <h5 style="color: rgb(252, 185, 0);" class="card-text">Data de Nascimento: {{ usuario.profile.dataDeNascimento }}</h5>
+                            <!-- Adicionar seção para os filmes marcados como vistos -->
+                            <h5 style="color: rgb(252, 185, 0)" class="card-title">Filmes Vistos</h5>
+                            <div class="row">
+                                {% for filme in filmes_vistos %}
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="filme">
+                                        <img src="{{ filme.poster_url }}" alt="{{ filme.titulo }}">
+                                        <h3 style="color: rgb(255, 255, 255);">{{ filme.titulo }}</h3>
+                                        <!-- Aqui você pode adicionar outras informações sobre o filme, se necessário -->
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <!-- Fim da seção de filmes vistos -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

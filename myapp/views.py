@@ -389,3 +389,30 @@ def home(request):
         # Se não, exiba uma mensagem de erro
         error_message = f"Erro ao listar filmes: {response.status_code}"
         return render(request, 'error.html', {'error_message': error_message})
+
+def exibir_perfil_usuario(request, username):
+    # Obtém o usuário com base no nome de usuário (username)
+    usuario = get_object_or_404(User, username=username)
+    profile = usuario.profile
+
+    filmes_vistos = []
+
+    for filme_id in profile.filmes.values_list('api_id', flat=True):  # Obter apenas os IDs dos filmes vistos pelo usuário
+        # Fazer uma solicitação para obter os detalhes do filme da API do TMDB
+        url = f"https://api.themoviedb.org/3/movie/{filme_id}"
+        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
+        params = {
+            "api_key": api_key,
+            "language": "pt-BR"
+        }
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            filme_detalhes = response.json()
+            titulo_filme = filme_detalhes.get('original_title')
+            poster_path = filme_detalhes.get('poster_path')
+            if titulo_filme and poster_path:
+                filmes_vistos.append({'titulo': titulo_filme, 'poster_url': f"https://image.tmdb.org/t/p/w500/{poster_path}"})
+
+    # Renderiza o template do perfil do usuário e passa o usuário e os filmes vistos como contexto
+    return render(request, 'perfiluser.html', {'usuario': usuario, 'filmes_vistos': filmes_vistos})

@@ -198,6 +198,9 @@ def marcar_visto(request, filme_id):
         return render(request, 'error.html', {'error_message': error_message})
     
 def home(request):
+    filmes = []  # Inicialize a lista de filmes vazia
+
+    # Verifique se o usuário está autenticado
     if request.user.is_authenticated:
         usuarios = User.objects.exclude(pk=request.user.pk)
         lista_usuarios = []
@@ -231,31 +234,29 @@ def home(request):
 
             lista_usuarios.append(info_usuario)
 
-        url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
-        api_key = "SUA_API_KEY"
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-        }
-        params = {
-            "api_key": api_key,
-            "sort_by": "popularity.desc"
-        }
-        response = requests.get(url, headers=headers, params=params)
+    # Obtenha os filmes populares, independentemente do status de autenticação
+    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
+    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
+    headers = {
+        "accept": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+    }
+    params = {
+        "api_key": api_key,
+        "sort_by": "popularity.desc"
+    }
+    response = requests.get(url, headers=headers, params=params)
 
-        if response.status_code == 200:
-            filmes = response.json()["results"]
-            context = {
-                'lista_usuarios': lista_usuarios,
-                'filmes': filmes
-            }
+    if response.status_code == 200:
+        filmes = response.json()["results"]
 
-            return render(request, 'index.html', context)
-        else:
-            error_message = f"Erro ao listar filmes: {response.status_code}"
-            return render(request, 'error.html', {'error_message': error_message})
-    else:
-        return render(request, 'index.html')
+    context = {
+        'lista_usuarios': lista_usuarios if request.user.is_authenticated else None,
+        'filmes': filmes
+    }
+
+    return render(request, 'index.html', context)
+
 
 def exibir_perfil_usuario(request, username):
     usuario = get_object_or_404(User, username=username)

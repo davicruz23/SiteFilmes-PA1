@@ -122,43 +122,6 @@ def video_list(request):
         error_message = f"Erro ao listar vídeos: {response.status_code}"
         return render(request, 'error.html', {'error_message': error_message})
 
-
-#def index(request):
-    # URL da API do TMDb para descobrir vídeos
-    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
-    # Chave de API do TMDb
-    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
-    # Cabeçalhos da requisição
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-    }
-    # Parâmetros da requisição
-    params = {
-        "api_key": api_key,
-        "sort_by": "popularity.desc"  # Você pode ajustar os parâmetros de acordo com sua necessidade
-    }
-
-    # Faça a requisição à API do TMDb
-    response = requests.get(url, headers=headers, params=params)
-
-    # Verifique se a resposta foi bem-sucedida (código 200)
-    if response.status_code == 200:
-        # Se sim, obtenha os vídeos
-        videos = response.json()["results"]
-        
-        # Paginação
-        paginator = Paginator(videos, 10)  # Mostra 10 vídeos por página
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        
-        # Renderize o template 'video_list.html' passando os vídeos como contexto
-        return render(request, 'index.html', {'page_obj': page_obj})
-    else:
-        # Se não, exiba uma mensagem de erro
-        error_message = f"Erro ao listar vídeos: {response.status_code}"
-        return render(request, 'error.html', {'error_message': error_message})
-
 def search_movies(request):
     if 'query' in request.GET:
         query = request.GET.get('query')
@@ -302,85 +265,6 @@ def home(request):
         context = {
             'lista_usuarios': lista_usuarios,
             'filmes': filmes
-        }
-        
-        # Renderize o template 'index.html' passando os dados como contexto
-        return render(request, 'index.html', context)
-    else:
-        # Se não, exiba uma mensagem de erro
-        error_message = f"Erro ao listar filmes: {response.status_code}"
-        return render(request, 'error.html', {'error_message': error_message})
-
-#def index(request):
-    # Buscar todos os usuários
-    usuarios = User.objects.all()
-
-    # Lista para armazenar os dados de cada usuário
-    lista_usuarios = []
-
-    # Iterar sobre cada usuário para obter suas informações
-    for usuario in usuarios:
-        # Buscar o perfil associado ao usuário
-        perfil = usuario.profile
-        
-        # Buscar os filmes favoritos do usuário
-        filmes_favoritos = perfil.filmes.all()
-        
-        # Verificar se há filmes favoritos
-        if filmes_favoritos:
-            # Acessar apenas o último filme favorito do usuário
-            ultimo_filme = filmes_favoritos.last()
-            # Obter o api_id do último filme favorito
-            ultimo_api_id = ultimo_filme.api_id
-        else:
-            # Se não houver filmes favoritos, atribuir None ao último api_id
-            ultimo_api_id = None
-
-        # Criar um dicionário com as informações do usuário
-        info_usuario = {
-            'usuario': usuario,
-            'foto_perfil': perfil.fotoPerfil.url,
-            'ultimo_api_id': ultimo_api_id,
-            'imagem_ultimo_filme': None  # Inicialmente, a imagem é None
-        }
-
-        # Adicionar o dicionário à lista de usuários
-        lista_usuarios.append(info_usuario)
-
-        # Se houver um último api_id, obter os detalhes do filme da API do TMDb
-        if ultimo_api_id:
-            url_filme = f"https://api.themoviedb.org/3/movie/{ultimo_api_id}?language=pt-BR&api_key=bfe8cc9c3791fe2745d71c6b203ad7ab"
-            response_filme = requests.get(url_filme)
-            if response_filme.status_code == 200:
-                # Se a solicitação for bem-sucedida, obtenha a URL da imagem do poster do filme
-                detalhes_filme = response_filme.json()
-                poster_path = detalhes_filme.get('poster_path')
-                if poster_path:
-                    # Se houver uma URL do poster, atualize o dicionário do usuário com a imagem do último filme
-                    info_usuario['imagem_ultimo_filme'] = f"https://image.tmdb.org/t/p/w500{poster_path}"
-
-    # Adicione aqui a solicitação à API do TMDb para obter a lista de filmes populares
-    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
-    api_key = "SUA_API_KEY"
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-    }
-    params = {
-        "api_key": api_key,
-        "sort_by": "popularity.desc"
-    }
-    response = requests.get(url, headers=headers, params=params)
-    
-    # Verifique se a resposta foi bem-sucedida
-    if response.status_code == 200:
-        # Se sim, obtenha os filmes populares
-        filmes_populares = response.json()["results"]
-        
-        # Adicione a lista de filmes populares ao contexto
-        context = {
-            'lista_usuarios': lista_usuarios,
-            'filmes_populares': filmes_populares  # Adicionando a lista de filmes populares ao contexto
         }
         
         # Renderize o template 'index.html' passando os dados como contexto

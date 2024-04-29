@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from .models import Filme, Comentario
 
 def mysite(request):
     
@@ -161,41 +162,50 @@ def search_movies(request):
 
 @login_required
 def marcar_visto(request, filme_id):
-    # URL da API do TMDb para obter detalhes do filme
-    url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
-    # Chave de API do TMDb
-    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
-    # Cabeçalhos da requisição
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-    }
+    if request.method == 'POST':
+        # Obter o comentário do formulário
+        comentario = request.POST.get('comentario')
 
-    # Parâmetros da requisição
-    params = {
-        "api_key": api_key
-    }
+        # URL da API do TMDb para obter detalhes do filme
+        url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
+        # Chave de API do TMDb
+        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
+        # Cabeçalhos da requisição
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+        }
 
-    # Faça a requisição à API do TMDb para obter os detalhes do filme
-    response = requests.get(url, headers=headers, params=params)
+        # Parâmetros da requisição
+        params = {
+            "api_key": api_key
+        }
 
-    # Verifique se a resposta foi bem-sucedida (código 200)
-    if response.status_code == 200:
-        # Se sim, obtenha os detalhes do filme
-        filme = response.json()
-        # Salve o ID do filme no modelo Filme
-        novo_filme = Filme(api_id=filme_id)
-        novo_filme.save()
-        
-        # Agora, vincule este filme ao usuário atual
-        request.user.profile.filmes.add(novo_filme)
-        
-        # Renderize o template 'video_details.html' passando os detalhes do filme como contexto
-        return render(request, 'details.html', {'filme': filme})
+        # Faça a requisição à API do TMDb para obter os detalhes do filme
+        response = requests.get(url, headers=headers, params=params)
+
+        # Verifique se a resposta foi bem-sucedida (código 200)
+        if response.status_code == 200:
+            # Se sim, obtenha os detalhes do filme
+            filme = response.json()
+            # Salve o ID do filme no modelo Filme
+            novo_filme = Filme(api_id=filme_id)
+            novo_filme.save()
+            
+            # Salvar o comentário no banco de dados
+            Comentario.objects.create(comentario=comentario, usuario=request.user, filme=novo_filme)
+            
+            # Agora, vincule este filme ao usuário atual
+            request.user.profile.filmes.add(novo_filme)
+            
+            # Renderize o template 'video_details.html' passando os detalhes do filme como contexto
+            return render(request, 'details.html', {'filme': filme})
+        else:
+            # Se não, exiba uma mensagem de erro
+            error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
+            return render(request, 'error.html', {'error_message': error_message})
     else:
-        # Se não, exiba uma mensagem de erro
-        error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
-        return render(request, 'error.html', {'error_message': error_message})
+        return redirect('index')  # Redirecionar se o método não for POST
     
 def home(request):
     filmes = []  # Inicialize a lista de filmes vazia
@@ -210,17 +220,22 @@ def home(request):
             sendo_seguido = perfil.seguindo.filter(user=request.user).exists()
             filmes_favoritos = perfil.filmes.all()
             ultimo_api_id = None
+            ultimo_comentario = None
 
             if filmes_favoritos:
                 ultimo_filme = filmes_favoritos.last()
                 ultimo_api_id = ultimo_filme.api_id if ultimo_filme else None
+                
+                # Obtenha o último comentário do usuário no último filme visto
+                ultimo_comentario = Comentario.objects.filter(usuario=usuario, filme=ultimo_filme).last()
 
             info_usuario = {
                 'usuario': usuario,
                 'foto_perfil': perfil.fotoPerfil.url,
                 'sendo_seguido': sendo_seguido,
                 'ultimo_api_id': ultimo_api_id,
-                'imagem_ultimo_filme': None
+                'imagem_ultimo_filme': None,
+                'ultimo_comentario': ultimo_comentario,
             }
 
             if ultimo_api_id:
@@ -256,6 +271,8 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
+
+
 
 
 def exibir_perfil_usuario(request, username):

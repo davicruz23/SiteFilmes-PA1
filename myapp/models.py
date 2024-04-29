@@ -44,3 +44,4 @@ class AvaliacaoUsuario(models.Model):
 class Comentario(models.Model):
     comentario = models.TextField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    filme = models.ForeignKey(Filme, on_delete=models.CASCADE)

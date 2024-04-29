@@ -42,29 +42,39 @@
 
                 <!-- Seção para exibir a lista de usuários e seus últimos filmes vistos -->
                 {% if request.user.is_authenticated %}
-                    {% if lista_usuarios %}
-                        <div class="container">
-                            {% for usuario_info in lista_usuarios %}
-                                <div class="card mb-3">
-                                    <div class="card-header d-flex align-items-center">
-                                        <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
-                                        <a href="{% url 'perfil_usuario' username=usuario_info.usuario.username %}" style="color: black;"><h5 style="color: black;" class="mb-0">{{ usuario_info.usuario.username }}</h5></a>
-                                    </div>
-                                    <div class="card-body">
-                                        <h6 class="card-title">Último Filme Visto:</h6>
-                                        {% if usuario_info.imagem_ultimo_filme %}
-                                            <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
-                                        {% else %}
-                                            <p class="card-text">Nenhum filme visto encontrado.</p>
-                                        {% endif %}
-                                    </div>
+                {% if lista_usuarios %}
+                    <div class="container">
+                        {% for usuario_info in lista_usuarios %}
+                            <div class="card mb-3">
+                                <div class="card-header d-flex align-items-center">
+                                    <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <a href="{% url 'perfil_usuario' username=usuario_info.usuario.username %}" style="color: black;"><h5 style="color: black;" class="mb-0">{{ usuario_info.usuario.username }}</h5></a>
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <p>Nenhum usuário encontrado.</p>
-                    {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">Último Filme Visto:</h6>
+                                    {% if usuario_info.imagem_ultimo_filme %}
+                                        <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                    {% else %}
+                                        <p class="card-text">Nenhum filme visto encontrado.</p>
+                                    {% endif %}
+
+                                    <!-- Exibir apenas o último comentário do usuário no último filme visto -->
+                                    <h6 class="card-title">Último Comentário:</h6>
+                                    {% if usuario_info.ultimo_comentario %}
+                                        <p style="color: rgb(255, 255, 255);"> {{ usuario_info.ultimo_comentario.comentario }}</p>
+                                    {% else %}
+                                        <p class="card-text">Nenhum comentário encontrado.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Nenhum usuário encontrado.</p>
                 {% endif %}
+                {% endif %}
+
+
             </div>
         </div>
     </div>

@@ -22,13 +22,18 @@
                         <p>Ano de Lançamento: {{ filme.release_date }}</p>
                         <!-- Adicione outras informações do filme aqui -->
                     </div>
-                    <!-- Formulário para marcar o filme como visto -->
-                    <form action="{% url 'marcar_visto' filme_id=filme.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Marcar como visto</button>
-                    </form>
-                    
                 </div>
+
+                <!-- Formulário para marcar o filme como visto e adicionar um comentário -->
+                <form action="{% url 'marcar_visto' filme_id=filme.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="comentario">Comentário:</label>
+                        <textarea class="form-control" id="comentario" name="comentario" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Marcar como visto</button>
+                </form>
+                
             </div>
         </div>
     </div>

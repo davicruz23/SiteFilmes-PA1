@@ -12,4 +12,7 @@ urlpatterns = [
     path('search/', views.search_movies, name='search_movies'),
     path('profile-edit/', views.update_profile, name='atualizar_perfil'),
     path('marcar_visto/<int:filme_id>/', views.marcar_visto, name='marcar_visto'),
+    path('seguir/<str:username>/', views.seguir_usuario, name='seguir_usuario'),
+    path('seguindo/', views.seguindo, name='seguindo'),  # Nova URL para a página de usuários seguidos
+    path('deixar_seguir/<str:username>/', views.deixar_seguir, name='deixar_seguir'),
 ]

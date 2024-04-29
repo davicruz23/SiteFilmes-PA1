@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Usuários que você está seguindo:</h1>
+    <ul class="list-group">
+        {% for usuario in usuarios_seguindo %}
+            <li class="list-group-item">
+                <img src="{{ usuario.user.profile.fotoPerfil.url }}" alt="Foto de perfil de {{ usuario.user.username }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                <a href="{% url 'perfil_usuario' username=usuario.user.username %}" style="color: black;"> {{ usuario.user.username }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

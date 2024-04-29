@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 def mysite(request):
     
@@ -196,93 +198,71 @@ def marcar_visto(request, filme_id):
         return render(request, 'error.html', {'error_message': error_message})
     
 def home(request):
-    # Buscar todos os usuários, exceto o usuário logado
-    usuarios = User.objects.exclude(pk=request.user.pk)
+    if request.user.is_authenticated:
+        usuarios = User.objects.exclude(pk=request.user.pk)
+        lista_usuarios = []
 
-    # Lista para armazenar os dados de cada usuário
-    lista_usuarios = []
+        for usuario in usuarios:
+            perfil = usuario.profile
+            sendo_seguido = perfil.seguindo.filter(user=request.user).exists()
+            filmes_favoritos = perfil.filmes.all()
+            ultimo_api_id = None
 
-    # Iterar sobre cada usuário para obter suas informações
-    for usuario in usuarios:
-        # Buscar o perfil associado ao usuário
-        perfil = usuario.profile
-        
-        # Buscar os filmes favoritos do usuário
-        filmes_favoritos = perfil.filmes.all()
-        
-        # Verificar se o usuário tem filmes favoritos
-        if filmes_favoritos:
-            # Acessar apenas o último filme favorito do usuário
-            ultimo_filme = filmes_favoritos.last()
-            # Obter o api_id do último filme favorito
-            ultimo_api_id = ultimo_filme.api_id
+            if filmes_favoritos:
+                ultimo_filme = filmes_favoritos.last()
+                ultimo_api_id = ultimo_filme.api_id if ultimo_filme else None
+
+            info_usuario = {
+                'usuario': usuario,
+                'foto_perfil': perfil.fotoPerfil.url,
+                'sendo_seguido': sendo_seguido,
+                'ultimo_api_id': ultimo_api_id,
+                'imagem_ultimo_filme': None
+            }
+
+            if ultimo_api_id:
+                url_filme = f"https://api.themoviedb.org/3/movie/{ultimo_api_id}?language=pt-BR&api_key=bfe8cc9c3791fe2745d71c6b203ad7ab"
+                response_filme = requests.get(url_filme)
+                if response_filme.status_code == 200:
+                    detalhes_filme = response_filme.json()
+                    poster_path = detalhes_filme.get('poster_path')
+                    if poster_path:
+                        info_usuario['imagem_ultimo_filme'] = f"https://image.tmdb.org/t/p/w500{poster_path}"
+
+            lista_usuarios.append(info_usuario)
+
+        url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
+        api_key = "SUA_API_KEY"
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+        }
+        params = {
+            "api_key": api_key,
+            "sort_by": "popularity.desc"
+        }
+        response = requests.get(url, headers=headers, params=params)
+
+        if response.status_code == 200:
+            filmes = response.json()["results"]
+            context = {
+                'lista_usuarios': lista_usuarios,
+                'filmes': filmes
+            }
+
+            return render(request, 'index.html', context)
         else:
-            # Se não houver filmes favoritos para este usuário, continuar para o próximo usuário
-            continue
-
-        # Criar um dicionário com as informações do usuário
-        info_usuario = {
-            'usuario': usuario,
-            'foto_perfil': perfil.fotoPerfil.url,
-            'ultimo_api_id': ultimo_api_id,
-            'imagem_ultimo_filme': None  # Inicialmente, a imagem é None
-        }
-
-        # Se houver um último api_id, obter os detalhes do filme da API do TMDb
-        if ultimo_api_id:
-            url_filme = f"https://api.themoviedb.org/3/movie/{ultimo_api_id}?language=pt-BR&api_key=bfe8cc9c3791fe2745d71c6b203ad7ab"
-            response_filme = requests.get(url_filme)
-            if response_filme.status_code == 200:
-                # Se a solicitação for bem-sucedida, obtenha a URL da imagem do poster do filme
-                detalhes_filme = response_filme.json()
-                poster_path = detalhes_filme.get('poster_path')
-                if poster_path:
-                    # Se houver uma URL do poster, atualize o dicionário do usuário com a imagem do último filme
-                    info_usuario['imagem_ultimo_filme'] = f"https://image.tmdb.org/t/p/w500{poster_path}"
-
-        # Adicionar o dicionário à lista de usuários
-        lista_usuarios.append(info_usuario)
-
-    # Adicione aqui a solicitação à API do TMDb para obter a lista de filmes populares
-    url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
-    api_key = "SUA_API_KEY"
-    headers = {
-        "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-    }
-    params = {
-        "api_key": api_key,
-        "sort_by": "popularity.desc"
-    }
-    response = requests.get(url, headers=headers, params=params)
-    
-    # Verifique se a resposta foi bem-sucedida
-    if response.status_code == 200:
-        # Se sim, obtenha os filmes populares
-        filmes = response.json()["results"]
-        
-        # Adicione a lista de filmes ao contexto
-        context = {
-            'lista_usuarios': lista_usuarios,
-            'filmes': filmes
-        }
-        
-        # Renderize o template 'index.html' passando os dados como contexto
-        return render(request, 'index.html', context)
+            error_message = f"Erro ao listar filmes: {response.status_code}"
+            return render(request, 'error.html', {'error_message': error_message})
     else:
-        # Se não, exiba uma mensagem de erro
-        error_message = f"Erro ao listar filmes: {response.status_code}"
-        return render(request, 'error.html', {'error_message': error_message})
+        return render(request, 'index.html')
 
 def exibir_perfil_usuario(request, username):
-    # Obtém o usuário com base no nome de usuário (username)
     usuario = get_object_or_404(User, username=username)
-    profile = usuario.profile
-
+    perfil = usuario.profile
     filmes_vistos = []
 
-    for filme_id in profile.filmes.values_list('api_id', flat=True):  # Obter apenas os IDs dos filmes vistos pelo usuário
-        # Fazer uma solicitação para obter os detalhes do filme da API do TMDB
+    for filme_id in perfil.filmes.values_list('api_id', flat=True):
         url = f"https://api.themoviedb.org/3/movie/{filme_id}"
         api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
         params = {
@@ -298,5 +278,47 @@ def exibir_perfil_usuario(request, username):
             if titulo_filme and poster_path:
                 filmes_vistos.append({'titulo': titulo_filme, 'poster_url': f"https://image.tmdb.org/t/p/w500/{poster_path}"})
 
-    # Renderiza o template do perfil do usuário e passa o usuário e os filmes vistos como contexto
-    return render(request, 'perfiluser.html', {'usuario': usuario, 'filmes_vistos': filmes_vistos})
+    # Verificar se o usuário logado está seguindo o usuário do perfil
+    sendo_seguido = False
+    if request.user.is_authenticated:
+        sendo_seguido = perfil.seguidores.filter(user=request.user).exists()
+
+    return render(request, 'perfiluser.html', {'usuario': usuario, 'perfil': perfil, 'filmes_vistos': filmes_vistos, 'sendo_seguido': sendo_seguido})
+
+@login_required
+def seguir_usuario(request, username):
+    # Obtém o usuário que está sendo seguido
+    usuario_seguido = get_object_or_404(User, username=username)
+    
+    # Verifica se o usuário atual já está seguindo o usuário sendo seguido
+    if request.user.profile.seguindo.filter(user=usuario_seguido).exists():
+        # Se sim, remove o usuário sendo seguido da lista de seguindo
+        request.user.profile.seguindo.remove(usuario_seguido.profile)
+    else:
+        # Se não, adiciona o usuário sendo seguido à lista de seguindo
+        request.user.profile.seguindo.add(usuario_seguido.profile)
+    
+    # Redireciona de volta para a página atual
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def seguindo(request):
+    # Obter a lista de usuários que o usuário logado está seguindo
+    usuarios_seguindo = request.user.profile.seguindo.all()
+    print(usuarios_seguindo)  # Adicione esta linha para verificar se a lista está sendo populada corretamente
+    
+    # Renderizar o template 'seguindo.html' passando a lista de usuários como contexto
+    return render(request, 'seguindo.html', {'usuarios_seguindo': usuarios_seguindo})
+
+
+def deixar_seguir(request, username):
+    # Obtém o usuário que está sendo seguido
+    usuario_seguido = get_object_or_404(User, username=username)
+    
+    # Verifica se o usuário logado está seguindo o usuário sendo seguido
+    if request.user.profile.seguindo.filter(user=usuario_seguido).exists():
+        # Se sim, remove o usuário sendo seguido da lista de seguindo
+        request.user.profile.seguindo.remove(usuario_seguido.profile)
+    
+    # Redireciona para a página 'seguindo.html'
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

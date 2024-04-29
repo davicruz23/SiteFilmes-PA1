@@ -7,68 +7,64 @@
         <div class="col-lg-12">
             <div class="page-content"> 
                 {% if not request.user.is_authenticated %}
-                <!-- ***** Banner Start ***** -->
-                <div class="main-banner">
-                    <div class="row">
-                        <div class="col-lg-7">
-                            <div class="header-text">
-                                <h6>Bem vindo ao CineFlix</h6>
-                                <h4><em>Descubra</em> sua próxima grande aventura cinematográfica com facilidade!</h4>
-                                <div class="main-button">
-                                    <a href="{% url 'register' %}">Cadastre-se</a>
+                    <!-- ***** Banner Start ***** -->
+                    <div class="main-banner">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="header-text">
+                                    <h6>Bem vindo ao CineFlix</h6>
+                                    <h4><em>Descubra</em> sua próxima grande aventura cinematográfica com facilidade!</h4>
+                                    <div class="main-button">
+                                        <a href="{% url 'register' %}">Cadastre-se</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- ***** Banner End ***** -->
-                
-                <!-- Seção para exibir os filmes populares apenas quando o usuário estiver deslogado -->
-                <div class="filmes-populares">
-                    <h1>Filmes Populares</h1>
-                    <div class="row">
-                        {% for filme in filmes %}
-                        <div class="col-lg-3 col-md-4 col-sm-6">
-                            <div class="filme">
-                                <img src="https://image.tmdb.org/t/p/w500/{{ filme.poster_path }}" alt="{{ filme.title }}">
-                                <h3>{{ filme.title }}</h3>
-                                <p>{{ filme.overview }}</p>
-                            </div>
+                    <!-- ***** Banner End ***** -->
+                    
+                    <!-- Seção para exibir os filmes populares apenas quando o usuário estiver deslogado -->
+                    <div class="filmes-populares">
+                        <h1>Filmes Populares</h1>
+                        <div class="row">
+                            {% for filme in filmes %}
+                                <div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="filme">
+                                        <img src="https://image.tmdb.org/t/p/w500/{{ filme.poster_path }}" alt="{{ filme.title }}">
+                                        <h3>{{ filme.title }}</h3>
+                                        <p>{{ filme.overview }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
-                </div>
                 {% endif %}
 
                 <!-- Seção para exibir a lista de usuários e seus últimos filmes vistos -->
                 {% if request.user.is_authenticated %}
-                {% if lista_usuarios %}
-                    <!-- ***** Lista de Usuários ***** -->
-                    <div class="usuarios-lista">
-                        <h2>Últimas Atualizações</h2>
-                        {% for usuario_info in lista_usuarios %}
-                            <div class="card mb-3">
-                                <div class="card-header d-flex align-items-center">
-                                    <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
-                                    <!-- Nome de usuário agora é um link para o perfil do usuário -->
-                                    <a href="{% url 'perfil_usuario' username=usuario_info.usuario.username %}" style="color: black;"><h5 style="color: black;" class="mb-0">{{ usuario_info.usuario.username }}</h5></a>
+                    {% if lista_usuarios %}
+                        <div class="container">
+                            {% for usuario_info in lista_usuarios %}
+                                <div class="card mb-3">
+                                    <div class="card-header d-flex align-items-center">
+                                        <img src="{{ usuario_info.foto_perfil }}" class="mr-3 rounded-circle" alt="Foto de perfil de {{ usuario_info.usuario.username }}" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <a href="{% url 'perfil_usuario' username=usuario_info.usuario.username %}" style="color: black;"><h5 style="color: black;" class="mb-0">{{ usuario_info.usuario.username }}</h5></a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">Último Filme Visto:</h6>
+                                        {% if usuario_info.imagem_ultimo_filme %}
+                                            <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
+                                        {% else %}
+                                            <p class="card-text">Nenhum filme visto encontrado.</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <h6 class="card-title">Último Filme Visto:</h6>
-                                    {% if usuario_info.imagem_ultimo_filme %}
-                                        <img src="{{ usuario_info.imagem_ultimo_filme }}" alt="Poster do último filme visto por {{ usuario_info.usuario.username }}" class="img-fluid mb-3" style="max-width: 200px;">
-                                    {% else %}
-                                        <p class="card-text">Nenhum filme visto encontrado.</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p>Nenhum usuário encontrado.</p>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p>Nenhum usuário encontrado.</p>
+                    {% endif %}
                 {% endif %}
-                {% endif %}
-
             </div>
         </div>
     </div>

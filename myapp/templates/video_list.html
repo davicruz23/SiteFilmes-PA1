@@ -12,25 +12,48 @@
             <div class="page-content">
                 <h1>Lista de Vídeos</h1>
 
-                {% if page_obj %}
-                    <div class="row">
-                        {% for video in page_obj %}
-                            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                                <div class="card h-20">
-                                    <a href="{% url 'filme_details' video.id %}">
-                                        <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top" alt="{{ video.original_title }}">
-                                    </a>
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ video.original_title }}</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p>Não há vídeos para exibir.</p>
+                {% if genero_mais_frequente %}
+                <h2>Baseado no gênero mais visto: {{ genero_mais_frequente.nome }}</h2>
                 {% endif %}
+
+                {% if page_obj %}
+                <div class="row">
+                    {% for video in page_obj %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100">
+                            <a href="{% url 'filme_details' video.id %}">
+                                <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top"
+                                    alt="{{ video.original_title }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ video.original_title }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
+
+                <!-- Paginação -->
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; primeira</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">próxima</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+                {% else %}
+                <p>Não há vídeos para exibir.</p>
+                {% endif %}
             </div>
         </div>
     </div>

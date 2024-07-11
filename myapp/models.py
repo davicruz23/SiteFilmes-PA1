@@ -3,8 +3,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import models
 
+class Genero(models.Model):
+    nome = models.CharField(max_length=255)
+
 class Filme(models.Model):
     api_id = models.IntegerField(unique=False, default=0)
+    generos = models.ManyToManyField(Genero)
 
     def get_poster_url(self):
         base_url = "https://image.tmdb.org/t/p/w500/"
@@ -44,4 +48,9 @@ class AvaliacaoUsuario(models.Model):
 class Comentario(models.Model):
     comentario = models.TextField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    filme = models.ForeignKey(Filme, on_delete=models.CASCADE)
+
+class UsuarioGeneroVisto(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    genero = models.ForeignKey(Genero, on_delete=models.CASCADE)
     filme = models.ForeignKey(Filme, on_delete=models.CASCADE)

@@ -94,17 +94,19 @@ def video_list(request):
     # Obtém todos os gêneros dos filmes vistos pelo usuário
     generos_vistos = UsuarioGeneroVisto.objects.filter(usuario=request.user)
     
-    # Conta qual gênero foi visto com mais frequência
-    genero_contagem = Counter([genero.genero.id for genero in generos_vistos])
-    genero_mais_frequente_id = genero_contagem.most_common(1)[0][0] if genero_contagem else None
+    # Conta qual gênero foi visto com mais frequência usando o nome
+    genero_contagem = Counter([genero.genero.nome for genero in generos_vistos])
+    genero_mais_frequente_nome = genero_contagem.most_common(1)[0][0] if genero_contagem else None
+    print(genero_mais_frequente_nome)
+
+    # Obtém o objeto Genero correspondente ao nome mais frequente
+    genero_mais_frequente = Genero.objects.get(nome=genero_mais_frequente_nome) if genero_mais_frequente_nome else None
 
     # Se houver um gênero mais frequente, buscar filmes desse gênero
-    if genero_mais_frequente_id:
-        url = f"https://api.themoviedb.org/3/discover/movie?with_genres={genero_mais_frequente_id}&language=pt-BR"
-        genero_mais_frequente = Genero.objects.get(id=genero_mais_frequente_id)  # Obtenha o objeto Genero correspondente
+    if genero_mais_frequente:
+        url = f"https://api.themoviedb.org/3/discover/movie?with_genres={genero_mais_frequente.nome}&language=pt-BR"
     else:
         url = "https://api.themoviedb.org/3/movie/popular?language=pt-BR"
-        genero_mais_frequente = None
 
     api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
     headers = {
@@ -199,7 +201,8 @@ def marcar_visto(request, filme_id):
             
             # Obter e salvar os gêneros do filme
             for genero in filme['genres']:
-                genero_obj, created = Genero.objects.get_or_create(nome=genero['name'])
+                genero_obj, created = Genero.objects.get_or_create(nome=genero['id'])
+                print(genero_obj)
                 novo_filme.generos.add(genero_obj)
                 # Salvar a associação entre o usuário e o gênero do filme
                 UsuarioGeneroVisto.objects.create(usuario=request.user, genero=genero_obj, filme=novo_filme)

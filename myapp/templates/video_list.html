@@ -23,10 +23,10 @@
                         <div class="card h-100">
                             <a href="{% url 'filme_details' video.id %}">
                                 <img src="https://image.tmdb.org/t/p/w500/{{ video.poster_path }}" class="card-img-top"
-                                    alt="{{ video.original_title }}">
+                                    alt="{{ video.title }}">
                             </a>
                             <div class="card-body">
-                                <h5 class="card-title">{{ video.original_title }}</h5>
+                                <h5 class="card-title">{{ video.title }}</h5>
                             </div>
                         </div>
                     </div>

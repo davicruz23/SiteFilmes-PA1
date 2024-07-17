@@ -60,7 +60,7 @@
                         <ul class="nav">
                             {% if request.user.is_authenticated %}
                                 <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
-                                <li><a href="{% url 'video_list' %}" class="{% if 'lista' in request.path %}active{% endif %}">Lista</a></li>
+                                <li><a href="{% url 'video_list' %}" class="{% if 'lista' in request.path %}active{% endif %}">Recomendados</a></li>
                                 <li><a href="{% url 'seguindo' %}" class="">Amigos</a></li>
                                 <li class="user-info">
                                     <span class="username">{{ request.user.username }}</span>

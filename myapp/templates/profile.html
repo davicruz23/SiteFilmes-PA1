@@ -5,32 +5,30 @@
 
 <!-- ***** Profile Content Start ***** -->
 <div class="container-fluid" style="margin-top: 100px;">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" >
         <div class="col-md-6">
             <div class="card text-center">
-                <div class="card-body">
+                <div class="card-body" style="background-color: #3a3535;">
                     <div style="width: 210px; height: 150px; overflow: hidden; border-radius: 50%; margin: 0 auto;">
                         {% if profile.fotoPerfil %}
                         <img src="{{ profile.fotoPerfil.url }}" alt="Imagem de Perfil" class="profile-image"
-                            style="width: 100%; height: auto;">
+                            style="width: 120%; height: 100%;">
                         {% else %}
                         <p>Imagem de perfil não encontrada</p>
                         {% endif %}
                     </div>
-                    <h1 class="card-title mt-4">Perfil de {{ user.username }}</h1>
-                    <p class="card-text">Descrição: {{ profile.description }}</p>
-                    <p class="card-text">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
+                    <h1 class="card-title mt-4">{{ user.first_name }}</h1>
+                    <p class="card-text" style="color: #fff;" >{{ profile.description }}</p>
+                    <p class="card-text" style="color: #fff;" >Data de Nascimento: {{ profile.dataDeNascimento }}</p>
                     <a href="{% url 'atualizar_perfil' %}" class="btn btn-primary mt-3">Atualizar Perfil</a>
-                    <h2 class="mt-4">Filmes Vistos:</h2>
+                    
                     <div class="container-fluid">
+                        <h2 class="mt-4">Filmes Vistos:</h2>
                         <div class="row justify-content-center">
                             {% for filme in filmes_vistos %}
                                 <div class="col-md-3 mb-4">
-                                    <div class="card">
+                                    <div class="card" style="width: 200px;">
                                         <img src="{{ filme.poster_url }}" class="card-img-top" alt="{{ filme.titulo }}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ filme.titulo }}</h5>
-                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}

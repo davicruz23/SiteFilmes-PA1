@@ -2,19 +2,12 @@
 {% load static %}
 
 {% block content %}
-<header class="header-area header-sticky">
-    <!-- Seu código do cabeçalho -->
-</header>
 
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
             <div class="page-content">
-                <h1>Lista de Vídeos</h1>
-
-                {% if genero_mais_frequente %}
-                <h2>Baseado no gênero mais visto: {{ genero_mais_frequente.nome }}</h2>
-                {% endif %}
+                <h1 style="color: #c91e65;">Filmes Recomendados</h1>
 
                 {% if page_obj %}
                 <div class="row">

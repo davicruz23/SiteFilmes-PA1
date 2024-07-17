@@ -9,36 +9,36 @@
                 <!-- Exibir informações do perfil do usuário -->
                 <div class="perfil-usuario">
                     <div class="card mb-3">
-                        <div class="card-header text-center"> <!-- Centralizando a imagem horizontalmente -->
+                        <div class="card-header text-center" style="background-color: #c91e65;"> <!-- Centralizando a imagem horizontalmente -->
                             <img src="{{ usuario.profile.fotoPerfil.url }}" class="rounded-circle img-fluid" alt="Foto de perfil de {{ usuario.username }}" style="width: 100px; height: 100px; object-fit: cover; margin: 0; padding: 0;">
                         </div>
                         <div class="card-body">
-                            <h4 style="color: rgb(252, 185, 0);" class="card-title">Usuário: {{ usuario.username }}</h4>
-                            {% if request.user != usuario %}
-                                {% if sendo_seguido %}
-                                    <!-- Botão de deixar de seguir -->
-                                    <form action="{% url 'deixar_seguir' username=usuario.username %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm ml-2">Deixar de seguir</button>
-                                    </form>
-                                {% else %}
-                                    <!-- Botão de seguir -->
-                                    <form action="{% url 'seguir_usuario' username=usuario.username %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-primary btn-sm ml-2">Seguir</button>
-                                    </form>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 style="color: rgb(247, 245, 239);" class="card-title">{{ usuario.username }}</h4>
+                                {% if request.user != usuario %}
+                                    {% if sendo_seguido %}
+                                        <!-- Botão de deixar de seguir -->
+                                        <form action="{% url 'deixar_seguir' username=usuario.username %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm ml-2">Deixar de seguir</button>
+                                        </form>
+                                    {% else %}
+                                        <!-- Botão de seguir -->
+                                        <form action="{% url 'seguir_usuario' username=usuario.username %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary btn-sm ml-2">Seguir</button>
+                                        </form>
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                            <h5 style="color: rgb(252, 185, 0);" class="card-text">Descrição: {{ usuario.profile.description }}</h5>
-                            <h5 style="color: rgb(252, 185, 0);" class="card-text">Data de Nascimento: {{ usuario.profile.dataDeNascimento }}</h5>
+                            </div>
+                            <h5 style="color: rgb(255, 255, 255);" class="card-text">{{ usuario.profile.description }}</h5> <br/>
                             <!-- Adicionar seção para os filmes marcados como vistos -->
-                            <h5 style="color: rgb(252, 185, 0)" class="card-title">Filmes Vistos</h5>
+                            <h5 style="color: rgb(255, 255, 255)" class="card-title">Filmes Vistos</h5>
                             <div class="row">
                                 {% for filme in filmes_vistos %}
                                 <div class="col-lg-3 col-md-4 col-sm-6">
                                     <div class="filme">
                                         <img src="{{ filme.poster_url }}" alt="{{ filme.titulo }}">
-                                        <h3 style="color: rgb(255, 255, 255);">{{ filme.titulo }}</h3>
                                         <!-- Aqui você pode adicionar outras informações sobre o filme, se necessário -->
                                     </div>
                                 </div>

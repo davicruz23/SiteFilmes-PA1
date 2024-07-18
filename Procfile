@@ -1,1 +1,1 @@
-web: gunicorn SiteFilmes-PA1.wsgi
+web: gunicorn SITEFILMES-PA1.wsgi

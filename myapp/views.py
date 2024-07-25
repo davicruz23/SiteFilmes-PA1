@@ -228,7 +228,8 @@ def home(request):
 
     # Verifique se o usuário está autenticado
     if request.user.is_authenticated:
-        usuarios = User.objects.exclude(pk=request.user.pk)
+        # Obtenha os usuários ordenados pela data de criação em ordem decrescente
+        usuarios = User.objects.exclude(pk=request.user.pk).order_by('-date_joined')
         lista_usuarios = []
 
         for usuario in usuarios:
@@ -287,7 +288,6 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
-
 
 
 

@@ -22,35 +22,27 @@ def browse(request):
     return render(request, 'browse.html')
 
 def filme_details(request, filme_id):
-    # URL da API do TMDb para obter detalhes do filme
     url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
-    # Chave de API do TMDb
-    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
-    # Cabeçalhos da requisição
+    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
     headers = {
         "accept": "application/json",
-        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
+        "Authorization": f"Bearer {api_key}"
     }
-
-    # Parâmetros da requisição
     params = {
         "api_key": api_key
     }
 
-    # Faça a requisição à API do TMDb para obter os detalhes do filme
     response = requests.get(url, headers=headers, params=params)
 
-    # Verifique se a resposta foi bem-sucedida (código 200)
     if response.status_code == 200:
-        # Se sim, obtenha os detalhes do filme
         filme = response.json()
-        # Renderize o template 'video_details.html' passando os detalhes do filme como contexto
-        return render(request, 'details.html', {'filme': filme})
+        # Obtenha os comentários para este filme
+        comentarios = Comentario.objects.filter(filme__api_id=filme_id)
+        return render(request, 'details.html', {'filme': filme, 'comentarios': comentarios})
     else:
-        # Se não, exiba uma mensagem de erro
         error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
         return render(request, 'error.html', {'error_message': error_message})
-
+    
 def streams(request):
     # Lógica da visualização
     return render(request, 'streams.html')
@@ -59,8 +51,9 @@ def streams(request):
 def profile(request):
     profile = get_object_or_404(MyProfile, user=request.user)
     filmes_vistos = []
+    comentarios_por_filme = []
 
-    for filme_id in profile.filmes.values_list('api_id', flat=True):  # Obter apenas os IDs dos filmes vistos pelo usuário
+    for filme_id in profile.filmes.values_list('api_id', flat=True):
         # Fazer uma solicitação para obter os detalhes do filme
         url = f"https://api.themoviedb.org/3/movie/{filme_id}"
         api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
@@ -75,9 +68,18 @@ def profile(request):
             titulo_filme = filme_detalhes.get('original_title')
             poster_path = filme_detalhes.get('poster_path')
             if titulo_filme and poster_path:
-                filmes_vistos.append({'titulo': titulo_filme, 'poster_url': f"https://image.tmdb.org/t/p/w500/{poster_path}"})
+                comentarios = Comentario.objects.filter(filme__api_id=filme_id, usuario=request.user)
+                filmes_vistos.append({
+                    'titulo': titulo_filme,
+                    'poster_url': f"https://image.tmdb.org/t/p/w500/{poster_path}",
+                    'id': filme_id,
+                    'comentarios': comentarios
+                })
 
-    return render(request, 'profile.html', {'profile': profile, 'filmes_vistos': filmes_vistos})
+    return render(request, 'profile.html', {
+        'profile': profile,
+        'filmes_vistos': filmes_vistos
+    })
 
 def update_profile(request):
     profile = request.user.profile  # Obtém o profile do usuário atual
@@ -169,58 +171,46 @@ def search_movies(request):
 
 @login_required
 def marcar_visto(request, filme_id):
-    if request.method == 'POST':
-        # Obter o comentário do formulário
-        comentario = request.POST.get('comentario')
+    # URL da API do TMDb para obter detalhes do filme
+    url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
+    api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"
+    headers = {
+        "accept": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    params = {
+        "api_key": api_key
+    }
 
-        # URL da API do TMDb para obter detalhes do filme
-        url = f"https://api.themoviedb.org/3/movie/{filme_id}?language=pt-BR"
-        # Chave de API do TMDb
-        api_key = "bfe8cc9c3791fe2745d71c6b203ad7ab"  # Substitua pela sua chave de API do TMDb
-        # Cabeçalhos da requisição
-        headers = {
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiZmU4Y2M5YzM3OTFmZTI3NDVkNzFjNmIyMDNhZDdhYiIsInN1YiI6IjYzNTJjMTNjYTBmMWEyMDA3OTYzMmZjNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.AXoon4kjsBMzYtTKRCUTDYR_Jfds9TPYi8okNTHjv5g"
-        }
+    response = requests.get(url, headers=headers, params=params)
+    if response.status_code == 200:
+        filme_data = response.json()
+        filme, created = Filme.objects.get_or_create(api_id=filme_id)
+        
+        for genero in filme_data['genres']:
+            genero_obj, created = Genero.objects.get_or_create(nome=genero['name'])
+            filme.generos.add(genero_obj)
 
-        # Parâmetros da requisição
-        params = {
-            "api_key": api_key
-        }
+        if request.method == 'POST':
+            comentario_texto = request.POST.get('comentario')
+            if comentario_texto:
+                Comentario.objects.create(
+                    comentario=comentario_texto,
+                    usuario=request.user,
+                    filme=filme
+                )
+                request.user.profile.filmes.add(filme)
+                # Redireciona para evitar reenvio do formulário em um refresh
+                return redirect('marcar_visto', filme_id=filme_id)
 
-        # Faça a requisição à API do TMDb para obter os detalhes do filme
-        response = requests.get(url, headers=headers, params=params)
+        # Carregar os comentários associados ao filme
+        comentarios = Comentario.objects.filter(filme=filme)
 
-        # Verifique se a resposta foi bem-sucedida (código 200)
-        if response.status_code == 200:
-            # Se sim, obtenha os detalhes do filme
-            filme = response.json()
-            # Salve o ID do filme no modelo Filme
-            novo_filme = Filme(api_id=filme_id)
-            novo_filme.save()
-            
-            # Obter e salvar os gêneros do filme
-            for genero in filme['genres']:
-                genero_obj, created = Genero.objects.get_or_create(nome=genero['id'])
-                print(genero_obj)
-                novo_filme.generos.add(genero_obj)
-                # Salvar a associação entre o usuário e o gênero do filme
-                UsuarioGeneroVisto.objects.create(usuario=request.user, genero=genero_obj, filme=novo_filme)
-            
-            # Salvar o comentário no banco de dados
-            Comentario.objects.create(comentario=comentario, usuario=request.user, filme=novo_filme)
-            
-            # Agora, vincule este filme ao usuário atual
-            request.user.profile.filmes.add(novo_filme)
-            
-            # Renderize o template 'video_details.html' passando os detalhes do filme como contexto
-            return render(request, 'details.html', {'filme': filme})
-        else:
-            # Se não, exiba uma mensagem de erro
-            error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
-            return render(request, 'error.html', {'error_message': error_message})
+        # Renderize o template com detalhes do filme e comentários
+        return render(request, 'details.html', {'filme': filme_data, 'comentarios': comentarios})
     else:
-        return redirect('index')  # Redirecionar se o método não for POST
+        error_message = f"Erro ao obter detalhes do filme: {response.status_code}"
+        return render(request, 'error.html', {'error_message': error_message})
 
     
 def home(request):
@@ -339,10 +329,22 @@ def seguir_usuario(request, username):
 def seguindo(request):
     # Obter a lista de usuários que o usuário logado está seguindo
     usuarios_seguindo = request.user.profile.seguindo.all()
-    print(usuarios_seguindo)  # Adicione esta linha para verificar se a lista está sendo populada corretamente
-    
+
+    # Se houver uma consulta de pesquisa
+    query = request.GET.get('query', '')
+    if query:
+        # Filtrar usuários com base na consulta
+        usuarios_pesquisa = User.objects.filter(username__icontains=query).exclude(pk=request.user.pk)
+    else:
+        usuarios_pesquisa = []
+
     # Renderizar o template 'seguindo.html' passando a lista de usuários como contexto
-    return render(request, 'seguindo.html', {'usuarios_seguindo': usuarios_seguindo})
+    return render(request, 'seguindo.html', {
+        'usuarios_seguindo': usuarios_seguindo,
+        'usuarios_pesquisa': usuarios_pesquisa,
+        'query': query
+    })
+
 
 
 def deixar_seguir(request, username):

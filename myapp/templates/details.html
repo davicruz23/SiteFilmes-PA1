@@ -2,37 +2,42 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="page-content">
-                <h1>Detalhes do Filme</h1>
+<div class="container mt-5">
+    <h1 class="mb-4">Detalhes do Filme</h1>
 
-                <div class="row">
-                    <div class="col-lg-4">
-                        <img src="https://image.tmdb.org/t/p/w500/{{ filme.poster_path }}" class="img-fluid" alt="{{ filme.original_title }}">
-                    </div>
-                    <div class="col-lg-8">
-                        <h2>{{ filme.original_title }}</h2>
-                        <p>{{ filme.overview }}</p>
-                        <p>Ano de Lançamento: {{ filme.release_date }}</p>
-                        <!-- Adicione outras informações do filme aqui -->
-                    </div>
-                </div>
-
-                <!-- Formulário para marcar o filme como visto e adicionar um comentário -->
-                <form action="{% url 'marcar_visto' filme_id=filme.id %}" method="post">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="comentario">Comentário:</label>
-                        <textarea class="form-control" id="comentario" name="comentario" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Marcar como visto</button>
-                </form>
-                
-            </div>
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <img src="https://image.tmdb.org/t/p/w500/{{ filme.poster_path }}" class="img-fluid" alt="{{ filme.original_title }}">
+        </div>
+        <div class="col-lg-8">
+            <h2>{{ filme.original_title }}</h2>
+            <p>{{ filme.overview }}</p>
+            <p>Ano de Lançamento: {{ filme.release_date }}</p>
+            <!-- Adicione outras informações do filme aqui -->
         </div>
     </div>
-</div>
 
+    <!-- Formulário para marcar o filme como visto e adicionar um comentário -->
+    <form action="{% url 'marcar_visto' filme_id=filme.id %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+            <label for="comentario">Comentário:</label>
+            <textarea class="form-control" id="comentario" name="comentario" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn" style="background-color: #f06292; color: white;">Marcar como visto</button>
+    </form>
+
+    <!-- Seção para exibir os comentários -->
+    <div class="comentarios">
+        <h3 class="mb-3">Comentários</h3>
+        {% for comentario in comentarios %}
+            <div class="comentario-card mb-3 p-3 border rounded">
+                <h4>{{ comentario.usuario.username }}</h4>
+                <p>{{ comentario.comentario }}</p>
+            </div>
+        {% empty %}
+            <p>Nenhum comentário encontrado.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

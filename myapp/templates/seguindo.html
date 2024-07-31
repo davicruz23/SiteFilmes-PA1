@@ -2,13 +2,46 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Seguindo:</h1> <br/>
+    <br/>
+
+    <!-- Formulário de pesquisa -->
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="Pesquisar por usuário..." value="{{ query }}">
+        </div>
+    </form>
+
+    <!-- Se houver resultados da pesquisa -->
+    {% if usuarios_pesquisa %}
+        <h3>Resultados da Pesquisa:</h3>
+        <div class="row">
+            {% for usuario in usuarios_pesquisa %}
+                <div class="col-md-4 mb-4">
+                    <div class="card" style="width: 18rem;">
+                        <a href="{% url 'perfil_usuario' username=usuario.username %}">
+                            <img src="{{ usuario.profile.fotoPerfil.url }}" class="card-img-top" alt="Foto de perfil de {{ usuario.username }}" style="height: 180px; object-fit: cover;">
+                        </a>
+                        <div class="card-body" style="height: 120px;">
+                            <h5 class="card-title">{{ usuario.username }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Lista de usuários que o usuário está seguindo -->
+    <h3>Seguindo:</h3>
     <ul class="list-group">
         {% for usuario in usuarios_seguindo %}
-            <li class="list-group-item" style="background-color: rgb(255, 255, 255);" >
-                <img src="{{ usuario.user.profile.fotoPerfil.url }}" alt="Foto de perfil de {{ usuario.user.username }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+            <li class="list-group-item" style="background-color: rgb(255, 255, 255);">
+                <a href="{% url 'perfil_usuario' username=usuario.user.username %}">
+                    <img src="{{ usuario.user.profile.fotoPerfil.url }}" alt="Foto de perfil de {{ usuario.user.username }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px;">
+                </a>
                 <a href="{% url 'perfil_usuario' username=usuario.user.username %}" style="color: black;"> {{ usuario.user.username }}</a>
             </li>
+        {% empty %}
+            <li class="list-group-item">Nenhum usuário encontrado.</li>
         {% endfor %}
     </ul>
 </div>

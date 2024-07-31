@@ -5,7 +5,7 @@
 
 <!-- ***** Profile Content Start ***** -->
 <div class="container-fluid" style="margin-top: 100px;">
-    <div class="row justify-content-center" >
+    <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card text-center">
                 <div class="card-body" style="background-color: #3a3535;">
@@ -18,17 +18,30 @@
                         {% endif %}
                     </div>
                     <h1 class="card-title mt-4">{{ user.first_name }}</h1>
-                    <p class="card-text" style="color: #fff;" >{{ profile.description }}</p>
-                    <p class="card-text" style="color: #fff;" >Data de Nascimento: {{ profile.dataDeNascimento }}</p>
+                    <p class="card-text" style="color: #fff;">{{ profile.description }}</p>
+                    <p class="card-text" style="color: #fff;">Data de Nascimento: {{ profile.dataDeNascimento }}</p>
                     <a href="{% url 'atualizar_perfil' %}" class="btn btn-primary mt-3">Atualizar Perfil</a>
                     
                     <div class="container-fluid">
                         <h2 class="mt-4">Filmes Vistos:</h2>
                         <div class="row justify-content-center">
                             {% for filme in filmes_vistos %}
-                                <div class="col-md-3 mb-4">
+                                <div class="col-md-4 mb-4">
                                     <div class="card" style="width: 200px;">
                                         <img src="{{ filme.poster_url }}" class="card-img-top" alt="{{ filme.titulo }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ filme.titulo }}</h5>
+                                            {% if filme.comentarios %}
+                                                <h6>Comentários:</h6>
+                                                {% for comentario in filme.comentarios %}
+                                                    <p>{{ comentario.comentario }}</p>
+                                                {% empty %}
+                                                    <p>Nenhum comentário para este filme.</p>
+                                                {% endfor %}
+                                            {% else %}
+                                                <p>Nenhum comentário para este filme.</p>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -76,3 +89,4 @@
         object-fit: cover;
     }
 </style>
+
